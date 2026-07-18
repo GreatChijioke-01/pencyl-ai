@@ -30,8 +30,8 @@ static NEXT_ID: AtomicU64 = AtomicU64::new(1);
 pub fn spawn_pty(app_handle: tauri::AppHandle, shell: Option<String>, cols: u16, rows: u16) -> Result<u64, String> {
     let pty_system = native_pty_system();
     let size = PtySize {
-        rows: rows,
-        cols: cols,
+        rows,
+        cols,
         pixel_width: 0,
         pixel_height: 0,
     };

@@ -8,6 +8,26 @@ export async function writeFileContent(path: string, content: string): Promise<v
   await invoke("write_file", { path, content });
 }
 
+export async function createFile(path: string): Promise<void> {
+  await invoke("create_file", { path });
+}
+
+export async function createDir(path: string): Promise<void> {
+  await invoke("create_dir", { path });
+}
+
+export async function deletePath(path: string): Promise<void> {
+  await invoke("delete_path", { path });
+}
+
+export async function renamePath(oldPath: string, newPath: string): Promise<void> {
+  await invoke("rename_path", { oldPath, newPath });
+}
+
+export async function movePath(sourcePath: string, targetFolderPath: string): Promise<void> {
+  await invoke("move_path", { sourcePath, targetFolderPath });
+}
+
 export async function runShellCommand(command: string): Promise<string> {
   return (await invoke("run_shell_command", { command })) as string;
 }

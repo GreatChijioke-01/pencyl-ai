@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { open, save } from "@tauri-apps/plugin-dialog";
 import { writeFileContent, readFileContent } from "../../services/fileService";
@@ -17,7 +17,6 @@ export default function TitleBar({ onOpenSettings }: TitleBarProps) {
   const addFile = useFileStore((state) => state.addFile);
   const removeFile = useFileStore((state) => state.removeFile);
   const updateActiveFile = useFileStore((state) => state.updateActiveFile);
-  const newFileCount = useRef(1);
   const [tabQueue, setTabQueue] = useState<string[]>(() => files.slice(0, 3).map((f) => f.id));
 
   useEffect(() => {
@@ -143,22 +142,6 @@ export default function TitleBar({ onOpenSettings }: TitleBarProps) {
     }
   };
 
-  const handleNewFile = () => {
-    const nextNumber = newFileCount.current;
-    const id = `untitled-${nextNumber}`;
-    const name = `Untitled ${nextNumber}`;
-    newFileCount.current += 1;
-
-    addFile({
-      id,
-      path: "",
-      name,
-      content: "",
-      isDirty: false,
-      kind: "file",
-    });
-  };
-
   // Maintain a FIFO queue of visible tabs (max 3). When a file becomes active,
   // enqueue it if not present; if queue exceeds 3, remove the oldest.
   useEffect(() => {
@@ -229,9 +212,6 @@ export default function TitleBar({ onOpenSettings }: TitleBarProps) {
         </button>
         <button className="titlebar-button" title="Open Terminal" onClick={handleOpenTerminal}>
           Terminal
-        </button>
-        <button className="titlebar-button" title="New File" onClick={handleNewFile}>
-          New
         </button>
         <button className="titlebar-button" title="Save" onClick={handleSave}>
           Save

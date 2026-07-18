@@ -3,4 +3,5 @@ export interface FileNode {
   path: string;
   is_directory: boolean;
   children?: FileNode[] | null;
+  isOpen?: boolean;
 }

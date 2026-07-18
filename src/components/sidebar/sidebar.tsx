@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { open } from "@tauri-apps/plugin-dialog";
+import { invoke } from "@tauri-apps/api/core";
 import { useFileStore } from "../../store/filestore";
 import SettingsPanel from "./settings_panel";
-import FileTree from "./fileTree/FileTree";
+import FileTree from "./fileTree/FileTree.tsx";
 import { readFileContent } from "../../services/fileService";
+import { getParentPath, joinPath } from "./fileTree/treeUtils";
 import "./sidebar.css";
 
 type SidebarView = "explorer" | "settings";
@@ -19,7 +21,18 @@ export default function Sidebar({ sidebarView, onViewChange }: SidebarProps) {
   const addFile = useFileStore((state) => state.addFile);
 
   const [rootPath, setRootPath] = useState<string | null>(null);
-  const [highlightPath, setHighlightPath] = useState<string | null>(null);
+  const [selectedPath, setSelectedPath] = useState<string | null>(null);
+  const [selectedIsDirectory, setSelectedIsDirectory] = useState(false);
+  const [isCreating, setIsCreating] = useState<"file" | "folder" | null>(null);
+  const [newItemName, setNewItemName] = useState("");
+  const [creationTargetPath, setCreationTargetPath] = useState<string | null>(null);
+  const [refreshToken, setRefreshToken] = useState(0);
+
+  const getCreationTarget = () => {
+    if (!rootPath) return null;
+    if (!selectedPath) return rootPath;
+    return selectedIsDirectory ? selectedPath : getParentPath(selectedPath) || rootPath;
+  };
 
   const handleOpenFolder = async () => {
     try {
@@ -27,6 +40,8 @@ export default function Sidebar({ sidebarView, onViewChange }: SidebarProps) {
       const folderPath = Array.isArray(selectedPath) ? selectedPath[0] : selectedPath;
       if (folderPath && typeof folderPath === "string") {
         setRootPath(folderPath);
+        setSelectedPath(null);
+        setSelectedIsDirectory(false);
         try {
           localStorage.setItem("pencyl.lastRoot", folderPath);
         } catch (err) {
@@ -73,18 +88,56 @@ export default function Sidebar({ sidebarView, onViewChange }: SidebarProps) {
     }
   }, []);
 
-  // Listen for requests to show only a specific file in the tree
-  useEffect(() => {
-    const handler = (e: any) => {
-      const path = e?.detail ?? e?.detail?.path ?? e;
-      if (!path || typeof path !== "string") return;
-      const parent = path.split("\\").slice(0, -1).join("\\") || path.split("/").slice(0, -1).join("/");
-      setRootPath(parent || null);
-      setHighlightPath(path);
-    };
-    window.addEventListener("pencyl:show-file-in-tree", handler as EventListener);
-    return () => window.removeEventListener("pencyl:show-file-in-tree", handler as EventListener);
-  }, []);
+  const cancelCreate = () => {
+    setIsCreating(null);
+    setNewItemName("");
+    setCreationTargetPath(null);
+  };
+
+  const submitNewItem = async () => {
+    const entryName = newItemName.trim();
+    const targetPath = creationTargetPath || getCreationTarget();
+    if (!entryName || !targetPath || !isCreating) {
+      cancelCreate();
+      return;
+    }
+
+    const fullPath = joinPath(targetPath, entryName);
+
+    try {
+      if (isCreating === "file") {
+        await invoke("create_file", { path: fullPath });
+        addFile({
+          id: fullPath,
+          path: fullPath,
+          name: entryName.split("\\").pop()?.split("/").pop() || entryName,
+          content: "",
+          isDirty: false,
+          kind: "file",
+        });
+        updateActiveFile(fullPath);
+        setSelectedPath(fullPath);
+        setSelectedIsDirectory(false);
+      } else {
+        await invoke("create_dir", { path: fullPath });
+        setSelectedPath(fullPath);
+        setSelectedIsDirectory(true);
+      }
+
+      setRefreshToken((value) => value + 1);
+      cancelCreate();
+    } catch (err) {
+      console.error(`Failed to create ${isCreating}:`, err);
+    }
+  };
+
+  const handleStartCreate = (mode: "file" | "folder") => {
+    const targetPath = getCreationTarget();
+    if (!targetPath) return;
+    setIsCreating(mode);
+    setCreationTargetPath(targetPath);
+    setNewItemName("");
+  };
 
   return (
     <div className="sidebar-container">
@@ -93,11 +146,32 @@ export default function Sidebar({ sidebarView, onViewChange }: SidebarProps) {
           <SettingsPanel onDone={() => onViewChange("explorer")} />
         ) : (
           <div className="sidebar-view">
-            <div className="sidebar-actions" style={{ padding: 8 }}>
-              <button className="titlebar-button" onClick={handleOpenFolder}>Open Folder</button>
+            <div className="explorer-header">
+              <span className="explorer-title">EXPLORER</span>
+              <div className="explorer-actions">
+                <button className="sidebar-icon-button" onClick={() => handleStartCreate("file")} title="New File">📄⁺</button>
+                <button className="sidebar-icon-button" onClick={() => handleStartCreate("folder")} title="New Folder">📁⁺</button>
+              </div>
             </div>
+
             {rootPath ? (
-              <FileTree rootPath={rootPath} onFileOpen={handleFileOpen} highlightPath={highlightPath} />
+              <FileTree
+                rootPath={rootPath}
+                onFileOpen={handleFileOpen}
+                refreshToken={refreshToken}
+                selectedPath={selectedPath}
+                creationTargetPath={creationTargetPath}
+                isCreating={isCreating}
+                newItemName={newItemName}
+                onSelectNode={(path: string | null, isDirectory: boolean) => {
+                  setSelectedPath(path);
+                  setSelectedIsDirectory(Boolean(path) && isDirectory);
+                }}
+                onNewItemNameChange={setNewItemName}
+                onSubmitNewItem={submitNewItem}
+                onCancelCreate={cancelCreate}
+                onRequestRefresh={() => setRefreshToken((value) => value + 1)}
+              />
             ) : (
               <div className="sidebar-empty">No folder selected. Click "Open Folder".</div>
             )}

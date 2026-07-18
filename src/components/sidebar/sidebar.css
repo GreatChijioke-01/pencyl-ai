@@ -37,6 +37,114 @@
   overflow: hidden;
 }
 
+.explorer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 12px 10px;
+  border-bottom: 1px solid var(--border-color);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent);
+}
+
+.explorer-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted-text-color);
+}
+
+.explorer-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.sidebar-action-button,
+.sidebar-icon-button,
+.sidebar-create-confirm,
+.sidebar-create-cancel {
+  border: 1px solid var(--border-color);
+  background: var(--surface-color);
+  color: var(--text-color);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+}
+
+.sidebar-icon-button {
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.sidebar-icon-button:hover,
+.sidebar-create-confirm:hover,
+.sidebar-create-cancel:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.sidebar-icon-button:active,
+.sidebar-create-confirm:active,
+.sidebar-create-cancel:active {
+  transform: translateY(1px);
+}
+
+.explorer-create-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.explorer-create-label {
+  flex: 0 0 auto;
+  font-size: 12px;
+  color: var(--muted-text-color);
+}
+
+.explorer-create-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--background-color);
+  color: var(--text-color);
+  font-size: 12px;
+  outline: none;
+}
+
+.explorer-create-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.16);
+}
+
+.sidebar-create-confirm,
+.sidebar-create-cancel {
+  padding: 7px 10px;
+  font-size: 12px;
+}
+
+.sidebar-create-confirm {
+  background: rgba(59, 130, 246, 0.14);
+  border-color: rgba(59, 130, 246, 0.38);
+}
+
+.sidebar-create-cancel {
+  color: var(--muted-text-color);
+}
+
 .sidebar-view,
 .settings-panel {
   display: flex;
