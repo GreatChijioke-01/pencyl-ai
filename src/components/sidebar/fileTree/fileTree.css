@@ -1,0 +1,42 @@
+.ft-root {
+  padding: 8px;
+  overflow: auto;
+}
+
+.ft-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.ft-row:hover {
+  background: rgba(59,130,246,0.04);
+}
+
+.ft-icon {
+  width: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted-text-color);
+}
+
+.ft-name {
+  font-size: 13px;
+  color: var(--text-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ft-children {
+  margin-top: 4px;
+}
+
+.ft-empty, .ft-loading, .ft-error {
+  padding: 12px;
+  color: var(--muted-text-color);
+}

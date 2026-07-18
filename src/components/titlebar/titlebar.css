@@ -1,0 +1,179 @@
+.titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 35px;
+  background-color: var(--surface-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 8px;
+  user-select: none;
+  -webkit-app-region: drag;
+  gap: 12px;
+  color: var(--text-color);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+}
+
+.theme-button {
+  padding: 4px 10px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: var(--button-bg);
+  color: var(--text-color);
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-button:hover {
+  background: var(--button-hover-bg);
+}
+
+.theme-button.active {
+  border-color: var(--primary-color);
+  background: rgba(59, 130, 246, 0.12);
+}
+
+.titlebar-left {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+}
+
+.app-name {
+  color: #cccccc;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+}
+
+.app-logo {
+  height: 28px;
+  width: auto;
+  display: flex;
+  align-items: center;
+  max-width: 150px;
+}
+
+.titlebar-center {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden; /* hide scrollbar */
+  overflow-y: hidden;
+  padding-left: 8px;
+}
+
+/* scrollbar intentionally hidden for titlebar tabs */
+
+.titlebar-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  -webkit-app-region: no-drag;
+  flex: 0 0 170px;
+  min-width: 170px;
+  max-width: 170px;
+  gap: 8px;
+  padding: 8px 10px;
+  margin-right: 6px;
+  border-radius: 6px;
+  border: 1px solid #3c3c3c;
+  background: #2b2b2b;
+  color: #e8e8e8;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.titlebar-tab.active {
+  border-color: #5a5a5a;
+  background: #333333;
+}
+
+.titlebar-tab-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  color: inherit;
+  flex: 1;
+}
+
+.titlebar-tab-close {
+  border: none;
+  background: transparent;
+  color: #bbb;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+  padding: 0;
+}
+
+.titlebar-tab-close:hover {
+  color: #ffffff;
+}
+
+.titlebar-right {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  -webkit-app-region: no-drag;
+}
+
+.titlebar-button {
+  padding: 4px 12px;
+  background-color: transparent;
+  border: none;
+  color: #cccccc;
+  font-size: 11px;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: background-color 0.15s ease;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+}
+
+.titlebar-button:hover {
+  background-color: #3c3c3c;
+}
+
+.titlebar-button:active {
+  background-color: #1e1e1e;
+}
+
+.window-controls {
+  display: flex;
+  gap: 2px;
+  -webkit-app-region: no-drag;
+}
+
+.window-button {
+  width: 32px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: none;
+  color: #cccccc;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+
+.window-button:hover {
+  background-color: #404040;
+}
+
+.window-button.close:hover {
+  background-color: #e81828;
+  color: #ffffff;
+}
+
+.window-button:active {
+  background-color: #303030;
+}
+
+.window-button.close:active {
+  background-color: #c41018;
+}

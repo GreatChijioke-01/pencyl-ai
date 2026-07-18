@@ -1,0 +1,156 @@
+/* Standardize box sizing */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Ensure root elements consume the full viewport */
+html, body, #root {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  overflow: hidden;
+  font-family: Inter, Roboto, -apple-system, "Segoe UI", "Helvetica Neue", Arial;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+:root {
+  color-scheme: light;
+  --background-color: #f6f3ee;
+  --surface-color: #fdf9f3;
+  --panel-color: #fbf5ed;
+  --border-color: #e8e2d9;
+  --text-color: #111827;
+  --muted-text-color: #5f6570;
+  --primary-color: #2563eb;
+  --button-bg: rgba(15, 23, 42, 0.06);
+  --button-hover-bg: rgba(15, 23, 42, 0.1);
+  --shadow-color: rgba(15, 23, 42, 0.08);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --background-color: #101116;
+  --surface-color: #15161b;
+  --panel-color: #181a1f;
+  --border-color: #26282e;
+  --text-color: #e5e7eb;
+  --muted-text-color: #a1a9b3;
+  --primary-color: #60a5fa;
+  --button-bg: rgba(255, 255, 255, 0.08);
+  --button-hover-bg: rgba(255, 255, 255, 0.12);
+  --shadow-color: rgba(0, 0, 0, 0.45);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --background-color: #f6f3ee;
+  --surface-color: #fdf9f3;
+  --panel-color: #fbf5ed;
+  --border-color: #e8e2d9;
+  --text-color: #111827;
+  --muted-text-color: #5f6570;
+  --primary-color: #2563eb;
+  --button-bg: rgba(15, 23, 42, 0.06);
+  --button-hover-bg: rgba(15, 23, 42, 0.12);
+  --shadow-color: rgba(15, 23, 42, 0.08);
+}
+
+/* App container (matches src/App.tsx) */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: var(--background-color);
+}
+
+/* Titlebar */
+.titlebar {
+  height: 44px;
+  flex: 0 0 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  background: var(--surface-color);
+  color: var(--text-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Footer bar mirrors the titlebar styling */
+.footerbar {
+  height: 44px;
+  flex: 0 0 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  background: var(--surface-color);
+  color: var(--text-color);
+  border-top: 1px solid var(--border-color);
+}
+
+.footer-left { flex: 0 0 auto; }
+.footer-center { flex: 1 1 auto; }
+.footer-right { flex: 0 0 auto; }
+
+/* Main workspace - three columns: sidebar | editor | ai-chat */
+.main-content {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  overflow: hidden;
+  /* leave space for title and footer */
+  height: calc(100vh - 88px);
+}
+
+/* Sidebar */
+.sidebar-container {
+  width: 260px;
+  flex-shrink: 0;
+  min-width: 150px;
+  max-width: 600px;
+  background-color: var(--panel-color);
+  border-right: 1px solid var(--border-color);
+  overflow-y: auto;
+  padding: 8px;
+}
+
+/* Editor (center) */
+.editor-container {
+  display: flex;
+  flex: 1; /* Allows expansion */
+  min-width: 0; /* Prevents overflow pushing panels out */
+  background-color: var(--surface-color);
+  overflow: hidden;
+}
+
+/* AI Chat (right) */
+.ai-chat-container {
+  width: 340px;
+  flex-shrink: 0;
+  min-width: 240px;
+  background-color: var(--panel-color);
+  border-left: 1px solid var(--border-color);
+  overflow-y: auto;
+  padding: 8px;
+}
+
+
+/* Helpers */
+.titlebar-left { display:flex; align-items:center; gap:8px; }
+.app-logo { height:28px; width:28px; }
+.titlebar-button { background: var(--button-bg); border: 1px solid transparent; color: var(--text-color); padding:6px 8px; cursor:pointer; border-radius: 4px; transition: background-color 0.2s ease; }
+.titlebar-button:hover { background: var(--button-hover-bg); }
+.window-controls { display:flex; gap:6px; align-items:center; margin-left:12px; }
+.window-button { background: var(--button-bg); color: var(--text-color); border: 1px solid transparent; }
+.window-button:hover { background: var(--button-hover-bg); }
+.window-button.close:hover { background: rgba(232, 63, 91, 0.15); color: var(--text-color); }
+.window-button:active { background: rgba(0, 0, 0, 0.16); }
+.window-button.close:active { background: rgba(232, 63, 91, 0.24); }
+
+/* Small responsive tweak */
+@media (max-width: 900px) {
+  .ai-chat-container { display: none; }
+}
