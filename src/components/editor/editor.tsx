@@ -8,7 +8,7 @@ export default function Editor(){
     const activeFileId = useFileStore((state) => state.activeFileId);
     const updateFileContent = useFileStore((state) => state.updateFileContent);
     const resolvedTheme = useThemeStore((state) => state.resolvedTheme);
-    const editorTheme = resolvedTheme === "dark" ? "vs-dark" : "light";
+    const editorTheme = resolvedTheme === "light" ? "light" : "vs-dark";
     const activeFile = files.find(f => f.id === activeFileId);
 
     if (!activeFile) {

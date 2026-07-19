@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useThemeStore } from "../../store/themeStore";
+import { useThemeStore, type ResolvedTheme, type ThemePreference } from "../../store/themeStore";
 import "./settings_panel.css";
 
 interface SettingsPanelProps {
@@ -10,16 +10,29 @@ export default function SettingsPanel({ onDone }: SettingsPanelProps) {
   const preference = useThemeStore((state) => state.preference);
   const setPreference = useThemeStore((state) => state.setPreference);
   const setResolvedTheme = useThemeStore((state) => state.setResolvedTheme);
-  const [localPref, setLocalPref] = useState<typeof preference>(preference);
+  const [localPref, setLocalPref] = useState<ThemePreference>(preference);
+
+  const themeOptions: Array<{
+    value: ThemePreference;
+    label: string;
+    description: string;
+    preview: ResolvedTheme | null;
+  }> = [
+    { value: "system", label: "System", description: "Follow the operating system theme.", preview: null },
+    { value: "light", label: "Light", description: "Bright, low-contrast workspace.", preview: "light" },
+    { value: "dark", label: "Dark", description: "Classic dark editor styling.", preview: "dark" },
+    { value: "ocean", label: "Ocean", description: "Deep blue palette with cool accents.", preview: "ocean" },
+    { value: "dracula", label: "Dracula", description: "Purple-on-charcoal theme with high contrast.", preview: "dracula" },
+  ];
 
   // Keep local copy so changes only persist on Done
-  const selectPref = (p: typeof preference) => {
+  const selectPref = (p: ThemePreference) => {
     setLocalPref(p);
     // Preview immediately
-    if (p === "light") {
-      setResolvedTheme("light");
-    } else if (p === "dark") {
-      setResolvedTheme("dark");
+    const option = themeOptions.find((entry) => entry.value === p);
+
+    if (option?.preview) {
+      setResolvedTheme(option.preview);
     } else {
       // system
       const mq = window.matchMedia("(prefers-color-scheme: dark)");
@@ -40,24 +53,16 @@ export default function SettingsPanel({ onDone }: SettingsPanelProps) {
       </div>
 
       <div className="settings-panel-content">
-        <button
-          className={`settings-option${localPref === "light" ? " active" : ""}`}
-          onClick={() => selectPref("light")}
-        >
-          Light
-        </button>
-        <button
-          className={`settings-option${localPref === "dark" ? " active" : ""}`}
-          onClick={() => selectPref("dark")}
-        >
-          Dark
-        </button>
-        <button
-          className={`settings-option${localPref === "system" ? " active" : ""}`}
-          onClick={() => selectPref("system")}
-        >
-          System
-        </button>
+        {themeOptions.map((option) => (
+          <button
+            key={option.value}
+            className={`settings-option${localPref === option.value ? " active" : ""}`}
+            onClick={() => selectPref(option.value)}
+          >
+            <span className="settings-option-label">{option.label}</span>
+            <span className="settings-option-description">{option.description}</span>
+          </button>
+        ))}
       </div>
 
       <div className="settings-panel-footer">

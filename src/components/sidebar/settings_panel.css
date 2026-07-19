@@ -42,8 +42,21 @@
   cursor: pointer;
   transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+}
+
+.settings-option-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.settings-option-description {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--muted-text-color);
 }
 
 .settings-option:hover {

@@ -42,6 +42,34 @@ html, body, #root {
   --shadow-color: rgba(0, 0, 0, 0.45);
 }
 
+[data-theme="ocean"] {
+  color-scheme: dark;
+  --background-color: #08111f;
+  --surface-color: #0f1b2d;
+  --panel-color: #11243a;
+  --border-color: #1f3a56;
+  --text-color: #e6f1ff;
+  --muted-text-color: #8fb2d4;
+  --primary-color: #38bdf8;
+  --button-bg: rgba(56, 189, 248, 0.12);
+  --button-hover-bg: rgba(56, 189, 248, 0.18);
+  --shadow-color: rgba(3, 17, 32, 0.42);
+}
+
+[data-theme="dracula"] {
+  color-scheme: dark;
+  --background-color: #1f202a;
+  --surface-color: #282a36;
+  --panel-color: #21222c;
+  --border-color: #343746;
+  --text-color: #f8f8f2;
+  --muted-text-color: #a8a8c0;
+  --primary-color: #bd93f9;
+  --button-bg: rgba(189, 147, 249, 0.12);
+  --button-hover-bg: rgba(189, 147, 249, 0.18);
+  --shadow-color: rgba(15, 16, 22, 0.5);
+}
+
 [data-theme="light"] {
   color-scheme: light;
   --background-color: #f6f3ee;
