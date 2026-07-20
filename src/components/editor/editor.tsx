@@ -72,7 +72,7 @@ export default function Editor() {
     }
 
 
-
+    // Terminal is rendered in the Editor section
     if (activeFile.kind === "terminal") {
 
         return (

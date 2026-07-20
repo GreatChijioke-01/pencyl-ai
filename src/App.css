@@ -84,6 +84,34 @@ html, body, #root {
   --shadow-color: rgba(15, 23, 42, 0.08);
 }
 
+[data-theme="sage"] {
+  color-scheme: dark;
+  --background-color: #1e2e25;
+  --surface-color: #253a2e;
+  --panel-color: #142019;
+  --border-color: #1a281f;
+  --text-color: #e0e8d8;
+  --muted-text-color: #8a9b88;
+  --primary-color: #7dc498;
+  --button-bg: rgba(125, 196, 152, 0.12);
+  --button-hover-bg: rgba(125, 196, 152, 0.18);
+  --shadow-color: rgba(30, 46, 37, 0.42);
+}
+
+[data-theme="caffeine"] {
+  color-scheme: dark;
+  --background-color: #2a1e18;
+  --surface-color: #342820;
+  --panel-color: #1e1410;
+  --border-color: #241a13;
+  --text-color: #e8d8c0;
+  --muted-text-color: #a89888;
+  --primary-color: #c4a484;
+  --button-bg: rgba(196, 164, 132, 0.12);
+  --button-hover-bg: rgba(196, 164, 132, 0.18);
+  --shadow-color: rgba(42, 30, 24, 0.45);
+}
+
 /* App container (matches src/App.tsx) */
 .app-container {
   display: flex;

@@ -50,6 +50,7 @@ const SUGGESTIONS = [
   "Add error handling to the current component",
 ];
 
+// defining the roles that would be used in the ai chat sidebar.
 function roleLabel(role: ChatRole): string {
   switch (role) {
     case "user":
@@ -128,6 +129,7 @@ export function AIChat({ projectRootPath, onClose }: AIChatProps) {
     requiresApiKey,
   } = useAIStore();
 
+  // Preparing Assets for the AI model to use.
   const setPendingDiff = useDiffStore((state) => state.setPendingDiff);
   const clearAllPendingDiffs = useDiffStore((state) => state.clearAllPendingDiffs);
   const pendingCount = useDiffStore((state) => Object.keys(state.pendingDiffs).length);

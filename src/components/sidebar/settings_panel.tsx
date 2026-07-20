@@ -23,6 +23,8 @@ export default function SettingsPanel({ onDone }: SettingsPanelProps) {
     { value: "dark", label: "Dark", description: "Classic dark editor styling.", preview: "dark" },
     { value: "ocean", label: "Ocean", description: "Deep blue palette with cool accents.", preview: "ocean" },
     { value: "dracula", label: "Dracula", description: "Purple-on-charcoal theme with high contrast.", preview: "dracula" },
+    { value: "sage", label: "Sage", description: "Muted forest green palette with calm, natural tones.", preview: "sage" },
+    { value: "caffeine", label: "Caffeine", description: "Warm coffee tones - cream, espresso, and mocha accents.", preview: "caffeine" }
   ];
 
   // Keep local copy so changes only persist on Done
