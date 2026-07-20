@@ -10,6 +10,6 @@
   font-size: 12px;
 }
 
-.footer-left { flex: 0 0 auto; }
+.footer-left { flex: 0 0 auto; color: grey; }
 .footer-center { flex: 1 1 auto; }
 .footer-right { flex: 0 0 auto; }

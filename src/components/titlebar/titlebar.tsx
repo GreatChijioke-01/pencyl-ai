@@ -119,6 +119,20 @@ export default function TitleBar({ onOpenSettings }: TitleBarProps) {
     }
   };
 
+  // Allow global Ctrl-S shortcut (wired via App/useKeyboardShortcuts) to call the same Save logic
+  useEffect(() => {
+    const onSaveShortcut = () => {
+      void handleSave();
+    };
+
+    window.addEventListener("pencyl:titlebar-save", onSaveShortcut);
+    return () => {
+      window.removeEventListener("pencyl:titlebar-save", onSaveShortcut);
+    };
+    // Intentionally depend on handleSave via state/closure.
+  }, [handleSave]);
+
+
   const handleSaveAs = async () => {
     if (!activeFileId) return;
     const file = files.find((f) => f.id === activeFileId);

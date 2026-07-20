@@ -4,6 +4,7 @@
 mod commands;
 mod pty;
 
+
 use std::fs::{self, File};
 use std::path::Path;
 
@@ -66,6 +67,8 @@ fn main() {
             pty::pty_write,
             pty::pty_resize,
             pty::pty_kill,
+            commands::ai_handler::write_ai_code,
+            commands::ai_handler::execute_terminal_command,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

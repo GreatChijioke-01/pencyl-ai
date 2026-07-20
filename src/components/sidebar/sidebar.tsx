@@ -88,6 +88,16 @@ export default function Sidebar({ sidebarView, onViewChange }: SidebarProps) {
     }
   }, []);
 
+  useEffect(() => {
+    globalThis.__PENCYL_PROJECT_ROOT_PATH = rootPath;
+  }, [rootPath]);
+
+  useEffect(() => {
+    const handler = () => setRefreshToken((value) => value + 1);
+    window.addEventListener("pencyl:refresh-tree", handler as EventListener);
+    return () => window.removeEventListener("pencyl:refresh-tree", handler as EventListener);
+  }, []);
+
   const cancelCreate = () => {
     setIsCreating(null);
     setNewItemName("");

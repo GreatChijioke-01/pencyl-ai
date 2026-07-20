@@ -1,9 +1,14 @@
 use tauri::command;
 use std::fs;
+use std::path::Path;
 use std::process::Command;
 
 #[command]
 pub fn write_ai_code(path: String, content: String) -> Result<String, String> {
+    if let Some(parent) = Path::new(&path).parent() {
+        fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+    }
+
     match fs::write(&path, content) {
         Ok(_) => Ok(format!("Successfully wrote to {}", path)),
         Err(e) => Err(format!("Failed to write file: {}", e.to_string())),

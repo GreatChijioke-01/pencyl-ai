@@ -9,6 +9,9 @@ pub fn read_file(path: String) -> Result<String, String> {
 
 #[command]
 pub fn write_file(path: String, content: String) -> Result<(), String> {
+    if let Some(parent) = Path::new(&path).parent() {
+        std::fs::create_dir_all(parent).map_err(|err| err.to_string())?;
+    }
     std::fs::write(&path, content).map_err(|err| err.to_string())
 }
 
