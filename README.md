@@ -88,26 +88,25 @@ Traditional AI-powered code editors can feel sluggish, heavy, and resource-hungr
 
 Pencyl AI separates UI rendering from OS-level file I/O and process execution using an asynchronous Rust Inter-Process Communication (IPC) bridge:
 
-<div align="center">
-┌─────────────────────────────────────────────────────────────────┐
-│                      Pencyl AI Desktop App                      │
-├────────────────────────────────┬────────────────────────────────┤
-│      React 18 Frontend UI       │      Tauri 2.0 Rust Core       │
-│                                │                                │
-│   ┌────────────────────────┐   │   ┌────────────────────────┐   │
-│   │     Monaco Editor      │   │   │     IPC Event Bus      │   │
-│   └───────────┬────────────┘   │   └───────────▲────────────┘   │
-│               │                │               │                │
-│   ┌───────────▼────────────┐   │   ┌───────────┴────────────┐   │
-│   │   Zustand State (Diff) │───┼──►│  Terminal Execution    │   │
-│   └───────────┬────────────┘   │   └───────────┬────────────┘   │
-│               │                │               │                │
-│   ┌───────────▼────────────┐   │   ┌───────────▼────────────┐   │
-│   │   AI Agent Engine      │   │   │   Local File System    │   │
-│   └────────────────────────┘   │   └────────────────────────┘   │
-└────────────────────────────────┴────────────────────────────────┘
+<div align="centre">
+  ┌─────────────────────────────────────────────────────────────────┐ 
+  │                      Pencyl AI Desktop App                      │ 
+  ├────────────────────────────────┬────────────────────────────────┤ 
+  │      React 18 Frontend UI      │      Tauri 2.0 Rust Core       │ 
+  │                                │                                │ 
+  │   ┌────────────────────────┐   │   ┌────────────────────────┐   │ 
+  │   │     Monaco Editor      │   │   │     IPC Event Bus      │   │ 
+  │   └───────────┬────────────┘   │   └───────────▲────────────┘   │ 
+  │               │                │               │                │ 
+  │   ┌───────────▼────────────┐   │   ┌───────────┴────────────┐   │ 
+  │   │   Zustand State (Diff) │───┼──►│  Terminal Execution    │   │ 
+  │   └───────────┬────────────┘   │   └───────────┬────────────┘   │ 
+  │               │                │               │                │ 
+  │   ┌───────────▼────────────┐   │   ┌───────────▼────────────┐   │ 
+  │   │   AI Agent Engine      │   │   │   Local File System    │   │ 
+  │   └────────────────────────┘   │   └────────────────────────┘   │ 
+  └────────────────────────────────┴────────────────────────────────┘ 
 </div>
-
 * **Frontend:** React 18, TypeScript, Zustand (State Management), Monaco Editor (`@monaco-editor/react`), Lucide React.
 * **Backend:** Tauri 2.0, Rust (Command Invocation, File I/O, Subprocess Execution).
 * **Styling:** CSS Variables with dynamic theme attribute binding.
@@ -129,20 +128,16 @@ Ensure you have the following installed on your machine:
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/GreatChijioke-01/pencyl-ai.git
+   git clone [https://github.com/GreatChijioke-01/pencyl-ai.git](https://github.com/GreatChijioke-01/pencyl-ai.git)
 
    cd pencyl-ai
    npm install
    npm run tauri dev
-   ```
 
-### 📦 Building for Production
+**📦 Building for Production**
+  To compile a standalone, optimized desktop binary (.exe, .msi, .dmg, or .AppImage):
 
-To compile a standalone, optimized desktop binary (.exe, .msi, .dmg, or .AppImage):
-
-```bash
-npm run tauri build
-```
+  npm run tauri build
 
 ## 📄 License
 
