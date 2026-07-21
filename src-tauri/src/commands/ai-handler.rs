@@ -3,7 +3,7 @@ use std::fs;
 use std::path::Path;
 use std::process::Command;
 
-#[command]
+#[allow(dead_code)]
 pub fn write_ai_code(path: String, content: String) -> Result<String, String> {
     if let Some(parent) = Path::new(&path).parent() {
         fs::create_dir_all(parent).map_err(|e| e.to_string())?;
@@ -15,7 +15,7 @@ pub fn write_ai_code(path: String, content: String) -> Result<String, String> {
     }
 }
 
-#[command]
+#[allow(dead_code)]
 pub fn execute_terminal_command (command_string: String, current_dir: String) -> Result<String, String> {
     #[cfg(target_os = "windows")]
     let mut process = Command::new("cmd");
