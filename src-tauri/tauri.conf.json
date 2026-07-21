@@ -16,7 +16,8 @@
         "width": 1200,
         "height": 800,
         "resizable": true,
-        "decorations": false
+        "decorations": false,
+        "icon": "icons/icon.ico"
       }
     ],
     "security": {
