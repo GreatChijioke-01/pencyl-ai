@@ -5,7 +5,7 @@ mod commands;
 mod pty;
 
 use std::fs::{self, File};
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 #[tauri::command]
 fn create_file(path: String) -> Result<(), String> {
