@@ -29,7 +29,7 @@
 ---
 
 <p align="center">
-  <img src="./assets/hero-diff.png" alt="Pencyl AI Hero Screenshot" width="100%" />
+  <img src="./public/firstpreview.png" alt="Pencyl AI Hero Screenshot" width="100%" />
 </p>
 
 ---
