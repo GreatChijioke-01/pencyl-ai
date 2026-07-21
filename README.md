@@ -88,25 +88,6 @@ Traditional AI-powered code editors can feel sluggish, heavy, and resource-hungr
 
 Pencyl AI separates UI rendering from OS-level file I/O and process execution using an asynchronous Rust Inter-Process Communication (IPC) bridge:
 
-<div align="centre">
-  ┌─────────────────────────────────────────────────────────────────┐ 
-  │                      Pencyl AI Desktop App                      │ 
-  ├────────────────────────────────┬────────────────────────────────┤ 
-  │      React 18 Frontend UI      │      Tauri 2.0 Rust Core       │ 
-  │                                │                                │ 
-  │   ┌────────────────────────┐   │   ┌────────────────────────┐   │ 
-  │   │     Monaco Editor      │   │   │     IPC Event Bus      │   │ 
-  │   └───────────┬────────────┘   │   └───────────▲────────────┘   │ 
-  │               │                │               │                │ 
-  │   ┌───────────▼────────────┐   │   ┌───────────┴────────────┐   │ 
-  │   │   Zustand State (Diff) │───┼──►│  Terminal Execution    │   │ 
-  │   └───────────┬────────────┘   │   └───────────┬────────────┘   │ 
-  │               │                │               │                │ 
-  │   ┌───────────▼────────────┐   │   ┌───────────▼────────────┐   │ 
-  │   │   AI Agent Engine      │   │   │   Local File System    │   │ 
-  │   └────────────────────────┘   │   └────────────────────────┘   │ 
-  └────────────────────────────────┴────────────────────────────────┘ 
-</div>
 * **Frontend:** React 18, TypeScript, Zustand (State Management), Monaco Editor (`@monaco-editor/react`), Lucide React.
 * **Backend:** Tauri 2.0, Rust (Command Invocation, File I/O, Subprocess Execution).
 * **Styling:** CSS Variables with dynamic theme attribute binding.
