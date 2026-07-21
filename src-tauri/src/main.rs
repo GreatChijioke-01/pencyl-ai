@@ -85,6 +85,8 @@ fn main() {
             move_path,
             commands::files::run_shell_command,
             commands::files::read_dir_tree,
+            commands::ai_handler::write_ai_code,
+            commands::ai_handler::execute_terminal_command,
             pty::spawn_pty,
             pty::pty_write,
             pty::pty_resize,
