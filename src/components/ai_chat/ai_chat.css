@@ -482,3 +482,71 @@
 .ai-chat-secondary-button:hover {
   background: var(--button-bg);
 }
+
+/* Command Permission Dialog */
+.ai-chat-command-permission {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.ai-chat-command-permission-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.ai-chat-command-permission-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.ai-chat-command-permission-header svg {
+  color: var(--primary-color);
+}
+
+.ai-chat-command-permission-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.ai-chat-command-permission-body p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-color);
+}
+
+.ai-chat-command-display {
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--surface-color);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--text-color);
+}
+
+.ai-chat-command-display code {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
+.ai-chat-command-permission-actions {
+  display: flex;
+  gap: 12px;
+  align-self: flex-end;
+}

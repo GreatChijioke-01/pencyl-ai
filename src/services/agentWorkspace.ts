@@ -25,6 +25,7 @@ export function buildAgentSystemPrompt(context: WorkspaceContext): string {
     "- Do NOT run git init if a repository may already exist.",
     "- Never request interactive programs (nano, vim, top, htop, less, more, watch, etc.).",
     "- Only use [RUN_COMMAND: ...] when a command is truly required.",
+    "- Each terminal command will require explicit user approval before execution.",
     "",
     "OUTPUT FORMAT:",
     "1) Code changes:",

@@ -25,6 +25,7 @@ import {
 import { chatCompletion, type ChatCompletionMessage } from "../../services/aiService";
 import { useAIStore, PROVIDER_MODEL_DEFAULTS, type AIProvider } from "../../store/ai_store";
 import { useDiffStore } from "../../store/diffStore";
+import { useCommandStore } from "../../store/commandStore";
 import { useFileStore } from "../../store/filestore";
 import { isPlausibleProjectRootPath } from "../../utils/pathUtils";
 import "./ai_chat.css";
@@ -98,16 +99,7 @@ function toApiMessages(messages: ChatMessage[]): ChatCompletionMessage[] {
   return out;
 }
 
-function buildFollowUpMessage(command: string, output: string): string {
-  return [
-    `The terminal command was executed: ${command}`,
-    "",
-    "Output:",
-    output,
-    "",
-    "Continue the task if more steps are required (file edits or another RUN_COMMAND). Otherwise summarize what was done.",
-  ].join("\n");
-}
+
 
 export function AIChat({ projectRootPath, onClose }: AIChatProps) {
   const {
@@ -133,6 +125,10 @@ export function AIChat({ projectRootPath, onClose }: AIChatProps) {
   const setPendingDiff = useDiffStore((state) => state.setPendingDiff);
   const clearAllPendingDiffs = useDiffStore((state) => state.clearAllPendingDiffs);
   const pendingCount = useDiffStore((state) => Object.keys(state.pendingDiffs).length);
+  
+  const setPendingCommand = useCommandStore((state) => state.setPendingCommand);
+  const clearPendingCommand = useCommandStore((state) => state.clearPendingCommand);
+  const pendingCommand = useCommandStore((state) => state.pendingCommand);
 
   const files = useFileStore((state) => state.files);
   const activeFileId = useFileStore((state) => state.activeFileId);
@@ -143,6 +139,7 @@ export function AIChat({ projectRootPath, onClose }: AIChatProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [tempKey, setTempKey] = useState("");
   const [showSetup, setShowSetup] = useState(false);
+  const [showCommandPermission, setShowCommandPermission] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -181,6 +178,12 @@ export function AIChat({ projectRootPath, onClose }: AIChatProps) {
       inputRef.current?.focus();
     }
   }, [needsInitialSetup, showSetup]);
+
+  useEffect(() => {
+    if (pendingCommand && !showCommandPermission) {
+      setShowCommandPermission(true);
+    }
+  }, [pendingCommand, showCommandPermission]);
 
   const handleSaveSetup = () => {
     if (requiresApiKey() && !tempKey.trim() && !apiKey) return;
@@ -266,13 +269,9 @@ export function AIChat({ projectRootPath, onClose }: AIChatProps) {
         break;
       }
 
-      const result = await executeAgentCommand(command, normalizedRoot);
-      setMessages((prev) => [...prev, { role: "system-result", text: result }]);
-
-      if (step === MAX_AGENT_STEPS - 1) break;
-
-      conversation.push({ role: "assistant", content: aiResponse });
-      conversation.push({ role: "user", content: buildFollowUpMessage(command, result) });
+      // Set pending command for user approval
+      setPendingCommand(command, normalizedRoot);
+      break;
 
       aiResponse = await chatCompletion({
         provider,
@@ -317,6 +316,45 @@ export function AIChat({ projectRootPath, onClose }: AIChatProps) {
   const handleClearChat = () => {
     setMessages([]);
     clearAllPendingDiffs();
+  };
+
+  const handleCommandApprove = async () => {
+    if (!pendingCommand) return;
+    
+    const { command, projectRoot } = pendingCommand;
+    clearPendingCommand();
+    setShowCommandPermission(false);
+    setIsLoading(true);
+    
+    try {
+      const result = await executeAgentCommand(command, projectRoot);
+      setMessages((prev) => [...prev, { role: "system-result", text: result }]);
+      
+      // Refresh filetree after command execution to show any changes
+      window.dispatchEvent(new CustomEvent("pencyl:refresh-tree"));
+    } catch (err) {
+      setMessages((prev) => [
+        ...prev,
+        { role: "system-result", text: `Command execution error: ${String(err)}`, isError: true },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCommandDeny = () => {
+    if (!pendingCommand) return;
+    
+    const { command } = pendingCommand;
+    clearPendingCommand();
+    setShowCommandPermission(false);
+    setMessages((prev) => [
+      ...prev,
+      { 
+        role: "system", 
+        text: `Terminal command was denied: ${command}. The agent will continue without executing it.`
+      },
+    ]);
   };
 
   const renderSetup = () => {
@@ -434,6 +472,43 @@ export function AIChat({ projectRootPath, onClose }: AIChatProps) {
     return renderSetup();
   }
 
+  if (showCommandPermission && pendingCommand) {
+    return (
+      <div className="ai-chat">
+        <div className="ai-chat-command-permission">
+          <div className="ai-chat-command-permission-header">
+            <Terminal size={20} />
+            <h3>Terminal Command Request</h3>
+          </div>
+          <div className="ai-chat-command-permission-body">
+            <p>The AI agent wants to run a terminal command:</p>
+            <div className="ai-chat-command-display">
+              <code>{pendingCommand.command}</code>
+            </div>
+            <p>Do you want to allow this command to execute?</p>
+          </div>
+          <div className="ai-chat-command-permission-actions">
+            <button
+              type="button"
+              className="ai-chat-secondary-button"
+              onClick={handleCommandDeny}
+            >
+              Deny
+            </button>
+            <button
+              type="button"
+              className="ai-chat-primary-button"
+              onClick={handleCommandApprove}
+              disabled={isLoading}
+            >
+              {isLoading ? "Executing..." : "Allow"}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="ai-chat">
       <header className="ai-chat-header">
@@ -447,6 +522,7 @@ export function AIChat({ projectRootPath, onClose }: AIChatProps) {
           <p className="ai-chat-subtitle">
             {getActiveModel()} · {PROVIDER_MODEL_DEFAULTS[provider].label}
             {pendingCount > 0 ? ` · ${pendingCount} pending review` : ""}
+            {pendingCommand ? " · Command pending approval" : ""}
             {!normalizedRoot ? " · No folder open" : ""}
           </p>
         </div>
