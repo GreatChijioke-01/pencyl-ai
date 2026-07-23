@@ -2,23 +2,18 @@ import { useState, useEffect } from "react";
 import { open } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
 import { useFileStore } from "../../store/filestore";
-import SettingsPanel from "./settings_panel";
 import FileTree from "./fileTree/FileTree.tsx";
 import { readFileContent } from "../../services/fileService";
 import { getParentPath, joinPath } from "./fileTree/treeUtils";
+import { FileText, Folder, Plus, Terminal } from 'lucide-react';
 import "./sidebar.css";
 
-type SidebarView = "explorer" | "settings";
-
-interface SidebarProps {
-  sidebarView: SidebarView;
-  onViewChange: (view: SidebarView) => void;
-}
-
-export default function Sidebar({ sidebarView, onViewChange }: SidebarProps) {
+export default function Sidebar() {
   const files = useFileStore((state) => state.files);
+  const activeFileId = useFileStore((state) => state.activeFileId);
   const updateActiveFile = useFileStore((state) => state.updateActiveFile);
   const addFile = useFileStore((state) => state.addFile);
+  const removeFile = useFileStore((state) => state.removeFile);
 
   const [rootPath, setRootPath] = useState<string | null>(null);
   const [selectedPath, setSelectedPath] = useState<string | null>(null);
@@ -92,6 +87,43 @@ export default function Sidebar({ sidebarView, onViewChange }: SidebarProps) {
     globalThis.__PENCYL_PROJECT_ROOT_PATH = rootPath;
   }, [rootPath]);
 
+  // Manage terminal file in file store when root path changes
+  useEffect(() => {
+    const terminalId = "terminal";
+    const terminalFile = files.find((f) => f.kind === "terminal");
+    
+    if (rootPath) {
+      // Add or update terminal file with current root path
+      if (!terminalFile) {
+        addFile({
+          id: terminalId,
+          path: rootPath,
+          name: "Terminal",
+          content: "",
+          isDirty: false,
+          kind: "terminal"
+        });
+      } else if (terminalFile.path !== rootPath) {
+        // Update existing terminal file path
+        removeFile(terminalFile.id);
+        addFile({
+          id: terminalId,
+          path: rootPath,
+          name: "Terminal",
+          content: "",
+          isDirty: false,
+          kind: "terminal"
+        });
+      }
+    } else {
+      // Remove terminal file if no root path
+      const existingTerminal = files.find((f) => f.kind === "terminal");
+      if (existingTerminal) {
+        removeFile(existingTerminal.id);
+      }
+    }
+  }, [rootPath, addFile, removeFile]);
+
   useEffect(() => {
     const handler = () => setRefreshToken((value) => value + 1);
     window.addEventListener("pencyl:refresh-tree", handler as EventListener);
@@ -152,19 +184,17 @@ export default function Sidebar({ sidebarView, onViewChange }: SidebarProps) {
   return (
     <div className="sidebar-container">
       <div className="sidebar-body">
-        {sidebarView === "settings" ? (
-          <SettingsPanel onDone={() => onViewChange("explorer")} />
-        ) : (
-          <div className="sidebar-view">
-            <div className="explorer-header">
-              <span className="explorer-title">EXPLORER</span>
-              <div className="explorer-actions">
-                <button className="sidebar-icon-button" onClick={() => handleStartCreate("file")} title="New File">📄⁺</button>
-                <button className="sidebar-icon-button" onClick={() => handleStartCreate("folder")} title="New Folder">📁⁺</button>
-              </div>
+        <div className="sidebar-view">
+          <div className="explorer-header">
+            <span className="explorer-title">EXPLORER</span>
+            <div className="explorer-actions">
+              <button className="sidebar-icon-button" onClick={() => handleStartCreate("file")} title="New File"><FileText size={14} /><Plus size={12} /></button>
+              <button className="sidebar-icon-button" onClick={() => handleStartCreate("folder")} title="New Folder"><Folder size={14} /><Plus size={12} /></button>
             </div>
+          </div>
 
-            {rootPath ? (
+          {rootPath ? (
+            <>
               <FileTree
                 rootPath={rootPath}
                 onFileOpen={handleFileOpen}
@@ -182,11 +212,35 @@ export default function Sidebar({ sidebarView, onViewChange }: SidebarProps) {
                 onCancelCreate={cancelCreate}
                 onRequestRefresh={() => setRefreshToken((value) => value + 1)}
               />
-            ) : (
-              <div className="sidebar-empty">No folder selected. Click "Open Folder".</div>
-            )}
-          </div>
-        )}
+              {/* Terminal entry */}
+              {files.find((f) => f.kind === "terminal") && (
+                <div
+                  className="ft-item"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const terminalFile = files.find((f) => f.kind === "terminal");
+                    if (terminalFile) {
+                      updateActiveFile(terminalFile.id);
+                      setSelectedPath(null);
+                      setSelectedIsDirectory(false);
+                    }
+                  }}
+                  style={{ cursor: "pointer" }}
+                >
+                  <div
+                    className={`ft-row ft-file ${activeFileId === files.find((f) => f.kind === "terminal")?.id ? "ft-selected" : ""}`}
+                    style={{ paddingLeft: "12px" }}
+                  >
+                    <div className="ft-icon"><Terminal size={14} className="text-green-400" /></div>
+                    <div className="ft-name">Terminal</div>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="sidebar-empty">No folder selected. Click "Open Folder".</div>
+          )}
+        </div>
       </div>
     </div>
   );

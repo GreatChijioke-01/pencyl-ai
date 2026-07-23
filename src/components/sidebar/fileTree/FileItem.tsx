@@ -1,6 +1,7 @@
 import React from "react";
 import type { FileNode } from "./types";
 import getFileIcon from "./fileIcons";
+import { Trash2, ChevronDown, ChevronRight, Folder, FileText, Pencil } from 'lucide-react';
 import "./fileTree.css";
 
 interface FileItemProps {
@@ -133,16 +134,16 @@ export default function FileItem({
         <div className="ft-actions">
           {isFolder && (
             <button className="ft-action-button" onClick={(event) => { event.stopPropagation(); onToggleOpen(node.path); }} title={isOpen ? "Collapse" : "Expand"}>
-              {isOpen ? "▾" : "▸"}
+              {isOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
             </button>
           )}
           {!isRootNode && (
             <>
               <button className="ft-action-button" onClick={(event) => { event.stopPropagation(); onStartRename(node); }} title="Rename">
-                ✎
+                <Pencil size={14} />
               </button>
               <button className="ft-action-button ft-danger" onClick={(event) => { event.stopPropagation(); onDeleteNode(node); }} title="Delete">
-                🗑
+                <Trash2 size={14} />
               </button>
             </>
           )}
@@ -153,7 +154,7 @@ export default function FileItem({
         <div className="ft-children">
           {creationTargetPath === node.path && isCreating && (
             <div className="ft-row ft-create-row" style={{ paddingLeft: 12 + (level + 1) * 16 }}>
-              <div className="ft-icon">{isCreating === "folder" ? "📁" : "📄"}</div>
+              <div className="ft-icon">{isCreating === "folder" ? <Folder size={14} /> : <FileText size={14} />}</div>
               <input
                 className="ft-inline-input"
                 value={newItemName}

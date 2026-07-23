@@ -5,7 +5,7 @@ import "xterm/css/xterm.css";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 
-export default function PtyTerminal({ shell }: { shell?: string }) {
+export default function PtyTerminal({ shell, cwd }: { shell?: string; cwd?: string }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const termRef = useRef<any | null>(null);
   const fitRef = useRef<any | null>(null);
@@ -31,7 +31,7 @@ export default function PtyTerminal({ shell }: { shell?: string }) {
       try {
         const cols = term.cols;
         const rows = term.rows;
-        const id = (await invoke("spawn_pty", { shell: shell ?? "", cols, rows })) as number;
+        const id = (await invoke("spawn_pty", { shell: shell ?? "", cols, rows, cwd: cwd ?? null })) as number;
         ptyIdRef.current = id;
 
         // listen for output

@@ -8,7 +8,6 @@ use std::collections::HashMap;
 use std::io::Read;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::thread;
-// tauri::Manager not required here
 
 #[derive(Clone, Serialize)]
 struct PtyOutputEvent {
@@ -27,7 +26,7 @@ static PTY_TABLE: Lazy<Mutex<HashMap<u64, PtyProcess>>> = Lazy::new(|| Mutex::ne
 static NEXT_ID: AtomicU64 = AtomicU64::new(1);
 
 #[tauri::command]
-pub fn spawn_pty(app_handle: tauri::AppHandle, shell: Option<String>, cols: u16, rows: u16) -> Result<u64, String> {
+pub fn spawn_pty(app_handle: tauri::AppHandle, shell: Option<String>, cols: u16, rows: u16, cwd: Option<String>) -> Result<u64, String> {
     let pty_system = native_pty_system();
     let size = PtySize {
         rows,
@@ -38,7 +37,7 @@ pub fn spawn_pty(app_handle: tauri::AppHandle, shell: Option<String>, cols: u16,
 
     let pair = pty_system.openpty(size).map_err(|e| e.to_string())?;
 
-    let command = match shell {
+    let mut command = match shell {
         Some(s) if !s.is_empty() => CommandBuilder::new(s),
         _ => {
             if cfg!(windows) {
@@ -48,6 +47,11 @@ pub fn spawn_pty(app_handle: tauri::AppHandle, shell: Option<String>, cols: u16,
             }
         }
     };
+
+    // Set working directory if provided
+    if let Some(dir) = cwd {
+        command.cwd(&dir);
+    }
 
     let child = pair.slave.spawn_command(command).map_err(|e| e.to_string())?;
 

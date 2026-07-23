@@ -97,6 +97,13 @@
   font-size: 12px;
   color: inherit;
   flex: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.titlebar-dirty-indicator {
+  color: var(--primary-color);
 }
 
 .titlebar-tab-close {

@@ -33,7 +33,6 @@ export default function Editor() {
     // Find terminal file to keep it mounted in DOM
     const terminalFile = files.find((f) => f.kind === "terminal");
 
-
     const findDiffForEditorPath = useDiffStore((state) => state.findDiffForEditorPath);
 
     const clearPendingDiff = useDiffStore((state) => state.clearPendingDiff);
@@ -41,39 +40,38 @@ export default function Editor() {
     // Subscribe to pendingDiffs to force re-render when diffs are added/removed
     useDiffStore((state) => state.pendingDiffs);
 
+    // Get the root path from global variable set by sidebar
+    const rootPath = globalThis.__PENCYL_PROJECT_ROOT_PATH ?? null;
+
 
 
     const [isApplying, setIsApplying] = useState(false);
 
-
-
-    if (!activeFile) {
-
-        return (
-
-            <div className="editor-container" style={{
-
-                height: "100%",
-
-                display: "flex",
-
-                alignItems: "center",
-
-                justifyContent: "center",
-
-                color: "#666"
-
-            }}>
-
-                <h2>No file open</h2>
-
-            </div>
-
-        );
-
+    // If active file is terminal, render terminal
+    if (activeFile?.kind === "terminal") {
+      return (
+        <div className="editor-container" style={{height: "100%", width: "100%", overflow: "hidden", display: "flex", flexDirection: "column"}}>
+          <div style={{ flex: 1, position: "relative" }}>
+            <Terminal cwd={rootPath ?? activeFile.path} />
+          </div>
+        </div>
+      );
     }
 
-
+    // If no active file, show empty state
+    if (!activeFile) {
+      return (
+        <div className="editor-container" style={{
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "#666"
+        }}>
+          <h2>No file open</h2>
+        </div>
+      );
+    }
 
     const diffMatch = activeFile.kind === "file" ? findDiffForEditorPath(activeFile.path) : null;
 
@@ -133,7 +131,7 @@ export default function Editor() {
 
         <div className="editor-container" style={{height: "100%", width: "100%", overflow: "hidden", display: "flex", flexDirection: "column"}}>
 
-            {activeFile.kind === "file" && suggestedCode && (
+            {suggestedCode && (
 
                 <div style={{ background: "var(--accent, #3b82f6)", color: "#fff", padding: "8px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "13px" }}>
 
@@ -151,7 +149,7 @@ export default function Editor() {
 
                         >
 
-                            {isApplying ? "Applying…" : "Accept"}
+                            {isApplying ? "Applying..." : "Accept"}
 
                         </button>
 
@@ -167,73 +165,42 @@ export default function Editor() {
 
             <div style={{ flex: 1, position: "relative" }}>
 
-                {activeFile.kind === "file" && (
-                  suggestedCode ? (
-
+                {suggestedCode ? (
                     <DiffEditor
-
                         height="100%"
-
                         theme={editorTheme}
-
                         original={originalCode}
-
                         modified={suggestedCode}
-
                         options={{
-
                             minimap: { enabled: false },
-
                             fontSize: 14,
-
                             wordWrap: "on",
-
                             renderSideBySide: true,
-
                             readOnly: true
-
                         }}
-
                     />
-
-                  ) : (
-
+                ) : (
                     <MonacoEditor
-
                         height="100%"
-
                         width="100%"
-
                         theme={editorTheme}
-
                         path={activeFile.path}
-
                         value={activeFile.content}
-
                         onChange={(value) => updateFileContent(activeFile.id, value || "")}
-
                         options={{
-
                             minimap: { enabled: false },
-
                             fontSize: 14,
-
                             wordWrap: "on",
-
                             padding: { top: 16 }
-
                         }}
-
                     />
-
-                  )
                 )}
 
             </div>
 
-            {terminalFile && (
-              <div style={{ display: activeFileId === terminalFile.id ? "block" : "none", height: "100%", width: "100%", overflow: "hidden", position: "absolute", top: 0, left: 0 }}>
-                <Terminal />
+            {terminalFile && activeFileId !== terminalFile.id && (
+              <div style={{ display: "none", height: "100%", width: "100%", overflow: "hidden" }}>
+                <Terminal cwd={rootPath ?? terminalFile.path} />
               </div>
             )}
 

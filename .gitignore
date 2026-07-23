@@ -34,3 +34,8 @@ src-tauri/target/
 # OS-specific files
 .DS_Store
 Thumbs.db
+
+# Tauri updater keys
+~
+*.key
+*.key.pub
