@@ -30,6 +30,8 @@ export default function Editor() {
 
     const activeFile = files.find((f) => f.id === activeFileId);
 
+    // Find terminal file to keep it mounted in DOM
+    const terminalFile = files.find((f) => f.kind === "terminal");
 
 
     const findDiffForEditorPath = useDiffStore((state) => state.findDiffForEditorPath);
@@ -72,24 +74,8 @@ export default function Editor() {
     }
 
 
-    // Terminal is rendered in the Editor section
-    if (activeFile.kind === "terminal") {
 
-        return (
-
-            <div className="editor-container" style={{height: "100%", width: "100%", overflow: "hidden"}}>
-
-                <Terminal />
-
-            </div>
-
-        );
-
-    }
-
-
-
-    const diffMatch = findDiffForEditorPath(activeFile.path);
+    const diffMatch = activeFile.kind === "file" ? findDiffForEditorPath(activeFile.path) : null;
 
     const suggestedCode = diffMatch?.diff.suggestedContent;
 
@@ -143,12 +129,11 @@ export default function Editor() {
     };
 
 
-
     return(
 
         <div className="editor-container" style={{height: "100%", width: "100%", overflow: "hidden", display: "flex", flexDirection: "column"}}>
 
-            {suggestedCode && (
+            {activeFile.kind === "file" && suggestedCode && (
 
                 <div style={{ background: "var(--accent, #3b82f6)", color: "#fff", padding: "8px 16px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "13px" }}>
 
@@ -182,7 +167,8 @@ export default function Editor() {
 
             <div style={{ flex: 1, position: "relative" }}>
 
-                {suggestedCode ? (
+                {activeFile.kind === "file" && (
+                  suggestedCode ? (
 
                     <DiffEditor
 
@@ -210,7 +196,7 @@ export default function Editor() {
 
                     />
 
-                ) : (
+                  ) : (
 
                     <MonacoEditor
 
@@ -240,9 +226,16 @@ export default function Editor() {
 
                     />
 
+                  )
                 )}
 
             </div>
+
+            {terminalFile && (
+              <div style={{ display: activeFileId === terminalFile.id ? "block" : "none", height: "100%", width: "100%", overflow: "hidden", position: "absolute", top: 0, left: 0 }}>
+                <Terminal />
+              </div>
+            )}
 
         </div>
 

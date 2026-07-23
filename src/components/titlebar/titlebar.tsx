@@ -3,6 +3,7 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import { open, save } from "@tauri-apps/plugin-dialog";
 import { writeFileContent, readFileContent } from "../../services/fileService";
 import { useFileStore } from "../../store/filestore";
+import { Settings, X, Minus, Square, Maximize2, Circle } from "lucide-react";
 import "./titlebar.css";
 
 type TitleBarProps = {
@@ -87,15 +88,20 @@ export default function TitleBar({ onOpenSettings }: TitleBarProps) {
   };
 
   const handleOpenTerminal = () => {
-    const id = `terminal-${Date.now()}-${Math.floor(Math.random() * 100000)}`;
-    addFile({
-      id,
-      path: "",
-      name: "Terminal",
-      content: "Welcome to the terminal. Type a command and press Enter or Run.\n",
-      isDirty: false,
-      kind: "terminal",
-    });
+    const existingTerminal = files.find((f) => f.kind === "terminal");
+    if (existingTerminal) {
+      updateActiveFile(existingTerminal.id);
+    } else {
+      const id = `terminal-${Date.now()}-${Math.floor(Math.random() * 100000)}`;
+      addFile({
+        id,
+        path: "",
+        name: "Terminal",
+        content: "Welcome to the terminal. Type a command and press Enter or Run.\n",
+        isDirty: false,
+        kind: "terminal",
+      });
+    }
   };
 
   const handleSave = async () => {
@@ -198,7 +204,7 @@ export default function TitleBar({ onOpenSettings }: TitleBarProps) {
               >
                 <span className="titlebar-tab-label">
                   {file.name}
-                  {file.isDirty ? " ●" : ""}
+                  {file.isDirty && <Circle size={8} className="titlebar-dirty-indicator" />}
                 </span>
                 <button
                   className="titlebar-tab-close"
@@ -208,7 +214,7 @@ export default function TitleBar({ onOpenSettings }: TitleBarProps) {
                   }}
                   title="Close"
                 >
-                  ×
+                  <X size={12} />
                 </button>
               </div>
             );
@@ -233,13 +239,10 @@ export default function TitleBar({ onOpenSettings }: TitleBarProps) {
         <button className="titlebar-button" title="Save As" onClick={handleSaveAs}>
           Save As
         </button>
-        <button className="titlebar-button" title="Settings" onClick={onOpenSettings}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 15.5C13.933 15.5 15.5 13.933 15.5 12C15.5 10.067 13.933 8.5 12 8.5C10.067 8.5 8.5 10.067 8.5 12C8.5 13.933 10.067 15.5 12 15.5Z" stroke="currentColor" strokeWidth="1.5"/>
-            <path d="M19.4 12.9999L21 11.5999L19.4 10.1999L19.15 7.99994L17.45 7.59994L16.45 5.99994L14.05 6.09994L12.65 4.49994L11.35 4.49994L9.95 6.09994L7.55 5.99994L6.55 7.59994L4.85 7.99994L4.6 10.1999L3 11.5999L4.6 12.9999L4.85 15.1999L6.55 15.5999L7.55 17.1999L9.95 17.0999L11.35 18.6999L12.65 18.6999L14.05 17.0999L16.45 17.1999L17.45 15.5999L19.15 15.1999L19.4 12.9999Z" stroke="currentColor" strokeWidth="1.5"/>
-          </svg>
-        </button>
 
+        <button className="titlebar-button flex items-center justify-center" title="Settings" onClick={onOpenSettings}>
+          <Settings size={16} />
+        </button>
         {/* Window Controls */}
         <div className="window-controls">
           <button
@@ -247,21 +250,21 @@ export default function TitleBar({ onOpenSettings }: TitleBarProps) {
             onClick={handleMinimize}
             title="Minimize"
           >
-            −
+            <Minus size={12} />
           </button>
           <button
             className="window-button maximize"
             onClick={handleMaximize}
             title={isMaximized ? "Restore" : "Maximize"}
           >
-            {isMaximized ? "❐" : "□"}
+            {isMaximized ? <Maximize2 size={12} /> : <Square size={12} />}
           </button>
           <button
             className="window-button close"
             onClick={handleClose}
             title="Close"
           >
-            ✕
+            <X size={12} />
           </button>
         </div>
       </div>
